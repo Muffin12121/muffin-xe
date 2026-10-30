@@ -1,25 +1,19 @@
-
 /** =========================================================*
-*
 *   MUFFIN — CINEMATIC PORTFOLIO
 *   Three.js + Earth + Geometry + GSAP + Discord + Spotify
-*
 *========================================================= **/
 
 (() => {
-
     "use strict";
 
     /** =====================================================*
     *       1. THREE.JS — 3D BACKGROUND
-    *    ===================================================== **/
+    *===================================================== **/
 
     if (typeof THREE !== "undefined") {
-
         const canvas = document.querySelector("#webgl");
 
         if (canvas) {
-
             const scene = new THREE.Scene();
 
             const camera = new THREE.PerspectiveCamera(
@@ -88,10 +82,8 @@
                 (texture) => {
                     texture.encoding = THREE.sRGBEncoding;
                     texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-
                     earth.material.map = texture;
                     earth.material.needsUpdate = true;
-
                     canvas.style.opacity = "1";
                 },
                 undefined,
@@ -133,7 +125,6 @@
             earthTiltGroup.add(orbitGroup);
 
             function createOrbit(radius, rotationX, rotationY, opacity) {
-
                 const geometry = new THREE.TorusGeometry(
                     radius,
                     0.0045,
@@ -148,10 +139,8 @@
                 });
 
                 const ring = new THREE.Mesh(geometry, material);
-
                 ring.rotation.x = rotationX;
                 ring.rotation.y = rotationY;
-
                 orbitGroup.add(ring);
             }
 
@@ -184,14 +173,12 @@
                     transparent: true,
                     opacity: 0.35
                 }),
-
                 new THREE.MeshBasicMaterial({
                     color: 0xd5dff2,
                     wireframe: true,
                     transparent: true,
                     opacity: 0.25
                 }),
-
                 new THREE.MeshBasicMaterial({
                     color: 0x5479b8,
                     wireframe: true,
@@ -210,7 +197,6 @@
                 scale,
                 speed
             ) {
-
                 const material = geometricMaterials[
                     Math.floor(Math.random() * geometricMaterials.length)
                 ];
@@ -233,7 +219,7 @@
                 geometricObjects.push(shape);
             }
 
-            //* No TorusKnotGeometry — removed the twisted white shape. *
+            //* No TorusKnotGeometry — removed the twisted white shape.*
 
             addFloatingShape(
                 new THREE.IcosahedronGeometry(0.55, 1),
@@ -276,7 +262,6 @@
             const positions = new Float32Array(particleCount * 3);
 
             for (let i = 0; i < particleCount; i++) {
-
                 const index = i * 3;
 
                 positions[index] = (Math.random() - 0.5) * 25;
@@ -307,7 +292,6 @@
             /** RESPONSIVE POSITIONING **/
 
             function updateSceneLayout() {
-
                 const mobile = window.innerWidth < 768;
 
                 if (mobile) {
@@ -324,7 +308,6 @@
 
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
-
                 renderer.setSize(window.innerWidth, window.innerHeight);
             }
 
@@ -345,32 +328,30 @@
             const clock = new THREE.Clock();
 
             function animate() {
-
                 const delta = Math.min(clock.getDelta(), 0.05);
                 const elapsed = clock.elapsedTime;
 
-                //* Earth rotation *
+                //* Earth rotation*
                 earth.rotation.y += delta * 0.12;
 
-                //* Orbital rings *
+                //* Orbital rings*
                 orbitGroup.rotation.y += delta * 0.08;
                 orbitGroup.rotation.x += delta * 0.015;
 
-                //* Satellite *
+                //* Satellite*
                 satellite.position.x = Math.cos(elapsed * 0.65) * 2.18;
                 satellite.position.z = Math.sin(elapsed * 0.65) * 2.18;
                 satellite.position.y = Math.sin(elapsed * 0.4) * 0.25;
 
-                //* Earth tilt *
+                //* Earth tilt*
                 earthTiltGroup.rotation.x +=
                     (mouseY - earthTiltGroup.rotation.x) * 0.015;
 
                 earthTiltGroup.rotation.z +=
                     (-mouseX - earthTiltGroup.rotation.z) * 0.015;
 
-                //* Geometric shapes *
+                //* Geometric shapes*
                 geometricObjects.forEach((shape) => {
-
                     const data = shape.userData;
 
                     shape.rotation.x += delta * data.rotationSpeed * 12;
@@ -390,7 +371,7 @@
                         ) * 0.12;
                 });
 
-                //* Particles *
+                //* Particles*
                 particles.rotation.y = elapsed * 0.012;
                 particles.rotation.x = Math.sin(elapsed * 0.15) * 0.025;
 
@@ -404,17 +385,14 @@
             let resizeTimeout;
 
             window.addEventListener("resize", () => {
-
                 clearTimeout(resizeTimeout);
 
                 resizeTimeout = setTimeout(() => {
-
                     updateSceneLayout();
 
                     if (typeof ScrollTrigger !== "undefined") {
                         ScrollTrigger.refresh();
                     }
-
                 }, 150);
             });
         }
@@ -422,7 +400,7 @@
 
     /** =====================================================*
     *       2. ANIMATION SETTINGS
-    *    ===================================================== **/
+    *===================================================== **/
 
     const prefersReducedMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)"
@@ -434,10 +412,9 @@
 
     /** =====================================================*
     *       3. GSAP — CINEMATIC ANIMATIONS
-    *    ===================================================== **/
+    *===================================================== **/
 
     if (typeof gsap !== "undefined" && !prefersReducedMotion) {
-
         if (typeof ScrollTrigger !== "undefined") {
             gsap.registerPlugin(ScrollTrigger);
         }
@@ -483,7 +460,6 @@
         });
 
         if (typeof ScrollTrigger !== "undefined") {
-
             const revealGroups = [
                 ".projects-heading",
                 ".project-item",
@@ -495,11 +471,9 @@
             ];
 
             revealGroups.forEach((selector) => {
-
                 const elements = gsap.utils.toArray(selector);
 
                 elements.forEach((element, index) => {
-
                     gsap.fromTo(
                         element,
                         {
@@ -525,7 +499,6 @@
             });
 
             gsap.utils.toArray(".section-label").forEach((element) => {
-
                 gsap.from(element, {
                     x: -22,
                     opacity: 0,
@@ -543,10 +516,9 @@
 
     /** =====================================================*
     *       4. LIQUID GLASS — MOUSE REFLECTION
-    *    ===================================================== **/
+    *===================================================== **/
 
     if (!isTouchDevice) {
-
         const glassElements = document.querySelectorAll(`
             .discord-card,
             .modrinth-button,
@@ -559,9 +531,7 @@
         `);
 
         glassElements.forEach((element) => {
-
             element.addEventListener("pointermove", (event) => {
-
                 const rect = element.getBoundingClientRect();
 
                 const x = event.clientX - rect.left;
@@ -580,10 +550,9 @@
 
     /** =====================================================*
     *       5. 3D TILT — GLASS CARDS
-    *    ===================================================== **/
+    *===================================================== **/
 
     if (!isTouchDevice && !prefersReducedMotion) {
-
         const tiltCards = document.querySelectorAll(`
             .discord-card,
             .modrinth-button,
@@ -593,11 +562,9 @@
         `);
 
         tiltCards.forEach((card) => {
-
             let frame;
 
             card.addEventListener("pointermove", (event) => {
-
                 const rect = card.getBoundingClientRect();
 
                 const x = (event.clientX - rect.left) / rect.width;
@@ -623,10 +590,9 @@
 
     /** =====================================================*
     *       6. MAGNETIC BUTTONS
-    *    ===================================================== **/
+    *===================================================== **/
 
     if (!isTouchDevice && !prefersReducedMotion) {
-
         const magneticButtons = document.querySelectorAll(`
             .primary-button,
             .nav-contact,
@@ -635,9 +601,7 @@
         `);
 
         magneticButtons.forEach((button) => {
-
             button.addEventListener("pointermove", (event) => {
-
                 const rect = button.getBoundingClientRect();
 
                 const x = event.clientX - rect.left - rect.width / 2;
@@ -655,18 +619,15 @@
 
     /** =====================================================*
     *       7. SMOOTH ANCHOR NAVIGATION
-    *    ===================================================== **/
+    *===================================================== **/
 
     document.querySelectorAll('a[href^="#"]').forEach((link) => {
-
         link.addEventListener("click", (event) => {
-
             const targetId = link.getAttribute("href");
 
             if (!targetId || targetId === "#") return;
 
             const target = document.querySelector(targetId);
-
             if (!target) return;
 
             event.preventDefault();
@@ -679,17 +640,11 @@
     });
 
     /** =====================================================*
-    *       8. DISCORD + SPOTIFY — LANYARD
-    *       LIVE TRACK + LAST PLAYED MEMORY
-    *    ===================================================== **/
+    *       8. DISCORD + SPOTIFY — SHARED CLOUDFLARE API
+    *===================================================== **/
 
     (() => {
-
         const DISCORD_ID = "1272488980046155868";
-        const STORAGE_KEY = "muffin_last_spotify_track";
-
-        const PLACEHOLDER =
-            "https://placehold.co/128x128/101725/9ba9c8?text=♫";
 
         const avatar = document.getElementById("discord-avatar");
         const statusText = document.getElementById("discord-status-text");
@@ -700,12 +655,7 @@
         const spotifyTitle = document.getElementById("spotify-title");
         const spotifyArtist = document.getElementById("spotify-artist");
         const spotifyLabel = document.getElementById("spotify-label");
-
-        const spotifyProgress =
-            document.getElementById("spotify-progress-fill");
-
-        const spotifyLastPlayed =
-            document.getElementById("spotify-last-played");
+        const spotifyProgress = document.getElementById("spotify-progress-fill");
 
         const statusLabels = {
             online: "Online",
@@ -714,268 +664,117 @@
             offline: "Offline"
         };
 
-        let progressTimer = null;
-        let currentTrack = null;
-        let lastTrack = loadLastTrack();
-
-        let socket = null;
-        let heartbeatTimer = null;
-        let reconnectTimer = null;
-
-        /** LOAD SAVED TRACK **/
-
-        function loadLastTrack() {
-
-            try {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                return saved ? JSON.parse(saved) : null;
-            } catch (error) {
-                console.warn("Could not load saved Spotify track:", error);
-                return null;
-            }
-        }
-
-        /** SAVE LAST TRACK **/
-
-        function saveLastTrack(track) {
-
-            lastTrack = track;
-
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(track));
-            } catch (error) {
-                console.warn("Could not save Spotify track:", error);
-            }
-        }
-
-        /** FORMAT DATE **/
-
-        function formatLastPlayed(timestamp) {
-
-            if (!timestamp) return "Time unavailable";
-
-            const date = new Date(timestamp);
-
-            if (Number.isNaN(date.getTime())) {
-                return "Time unavailable";
-            }
-
-            return date.toLocaleString("en-IN", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-                hour: "numeric",
-                minute: "2-digit"
-            });
-        }
-
-        /** DISCORD STATUS **/
-
         function showStatus(status) {
-
             if (!statusText || !statusDot) return;
 
-            const normalized = statusLabels[status]
-                ? status
-                : "offline";
+            const normalized = statusLabels[status] ? status : "offline";
 
             statusText.textContent = statusLabels[normalized];
-
-            statusDot.className =
-                "discord-status-dot is-" + normalized;
+            statusDot.className = "discord-status-dot is-" + normalized;
         }
 
-        /** SHOW LAST PLAYED **/
+        // Cloudflare Worker API — shared track for every visitor.
+        const SPOTIFY_API =
+            "https://muffin-spotify-api.naitikchaudhary-alg.workers.dev/api/spotify";
 
-        function showLastPlayed() {
+        async function loadSharedSpotify() {
+            if (!spotifyCard) return;
 
-            if (!lastTrack) {
+            try {
+                const response = await fetch(SPOTIFY_API, {
+                    cache: "no-store"
+                });
+
+                if (!response.ok) {
+                    throw new Error("Spotify API request failed");
+                }
+
+                const payload = await response.json();
+
+                const track =
+                    payload && payload.available ? payload.track : null;
+
+                if (!track) {
+                    if (spotifyTitle) {
+                        spotifyTitle.textContent = "No track saved yet";
+                    }
+
+                    if (spotifyArtist) {
+                        spotifyArtist.textContent =
+                            "Spotify activity will appear here";
+                    }
+
+                    if (spotifyLabel) {
+                        spotifyLabel.textContent = "LAST PLAYED ON SPOTIFY";
+                    }
+
+                    return;
+                }
+
+                if (spotifyCover) {
+                    spotifyCover.src =
+                        track.album_art ||
+                        "https://placehold.co/128x128/101725/9ba9c8?text=♫";
+
+                    spotifyCover.alt = `Album artwork for ${track.name}`;
+                }
+
+                if (spotifyTitle) {
+                    spotifyTitle.textContent = track.name || "Unknown track";
+                }
+
+                if (spotifyArtist) {
+                    spotifyArtist.textContent =
+                        track.artist || "Unknown artist";
+
+                    if (track.album) {
+                        spotifyArtist.textContent += ` · ${track.album}`;
+                    }
+                }
+
+                if (spotifyLabel) {
+                    spotifyLabel.textContent = "LAST PLAYED ON SPOTIFY";
+                }
+
+                if (track.url) {
+                    spotifyCard.href = track.url;
+                }
+
+                if (spotifyProgress) {
+                    spotifyProgress.style.width = "0%";
+                }
+
+            } catch (error) {
+                console.warn(
+                    "Could not load shared Spotify track:",
+                    error
+                );
 
                 if (spotifyLabel) {
                     spotifyLabel.textContent = "SPOTIFY ACTIVITY";
                 }
 
                 if (spotifyTitle) {
-                    spotifyTitle.textContent =
-                        "Not listening right now";
+                    spotifyTitle.textContent = "Unable to load track";
                 }
 
                 if (spotifyArtist) {
                     spotifyArtist.textContent =
-                        "No recently played track saved yet";
+                        "Please try again shortly";
                 }
-
-                if (spotifyCover) {
-                    spotifyCover.src = PLACEHOLDER;
-                }
-
-                if (spotifyCard) {
-                    spotifyCard.href = "https://open.spotify.com/";
-                }
-
-                if (spotifyLastPlayed) {
-                    spotifyLastPlayed.textContent = "";
-                    spotifyLastPlayed.style.display = "none";
-                }
-
-                return;
-            }
-
-            if (spotifyLabel) {
-                spotifyLabel.textContent = "LAST PLAYED";
-            }
-
-            if (spotifyTitle) {
-                spotifyTitle.textContent =
-                    lastTrack.song || "Unknown track";
-            }
-
-            if (spotifyArtist) {
-                spotifyArtist.textContent =
-                    lastTrack.artist || "Unknown artist";
-            }
-
-            if (spotifyCover) {
-                spotifyCover.src =
-                    lastTrack.cover || PLACEHOLDER;
-            }
-
-            if (spotifyCard) {
-                spotifyCard.href = lastTrack.trackId
-                    ? `https://open.spotify.com/track/${encodeURIComponent(lastTrack.trackId)}`
-                    : "https://open.spotify.com/";
-            }
-
-            if (spotifyLastPlayed) {
-                spotifyLastPlayed.textContent =
-                    "Last listened: " +
-                    formatLastPlayed(lastTrack.lastPlayed);
-
-                spotifyLastPlayed.style.display = "block";
             }
         }
 
-        /** RESET TO LAST PLAYED **/
+        // Load immediately and refresh every 60 seconds.
+        loadSharedSpotify();
+        setInterval(loadSharedSpotify, 60000);
 
-        function resetSpotify() {
-
-            if (progressTimer) {
-                clearInterval(progressTimer);
-                progressTimer = null;
-            }
-
-            currentTrack = null;
-
-            if (spotifyProgress) {
-                spotifyProgress.style.width = "0%";
-            }
-
-            showLastPlayed();
-        }
-
-        /** UPDATE LIVE SPOTIFY **/
-
-        function updateSpotify(spotify) {
-
-            if (!spotifyCard) return;
-
-            if (!spotify || !spotify.song) {
-                resetSpotify();
-                return;
-            }
-
-            const trackKey = spotify.track_id || spotify.song;
-            const isNewTrack = trackKey !== currentTrack;
-
-            if (isNewTrack) {
-
-                currentTrack = trackKey;
-
-                if (progressTimer) {
-                    clearInterval(progressTimer);
-                    progressTimer = null;
-                }
-
-                // Save the time this portfolio first detects the track.
-                saveLastTrack({
-                    song: spotify.song || "Unknown track",
-                    artist: spotify.artist || "Unknown artist",
-                    cover: spotify.album_art_url || PLACEHOLDER,
-                    trackId: spotify.track_id || null,
-                    lastPlayed: Date.now()
-                });
-            }
-
-            if (spotifyCover) {
-                spotifyCover.src =
-                    spotify.album_art_url || PLACEHOLDER;
-            }
-
-            if (spotifyTitle) {
-                spotifyTitle.textContent =
-                    spotify.song || "Unknown track";
-            }
-
-            if (spotifyArtist) {
-                spotifyArtist.textContent =
-                    spotify.artist || "Unknown artist";
-            }
-
-            if (spotifyLabel) {
-                spotifyLabel.textContent =
-                    "NOW PLAYING ON SPOTIFY";
-            }
-
-            if (spotifyLastPlayed) {
-                spotifyLastPlayed.textContent = "Currently playing";
-                spotifyLastPlayed.style.display = "block";
-            }
-
-            spotifyCard.href = spotify.track_id
-                ? `https://open.spotify.com/track/${encodeURIComponent(spotify.track_id)}`
-                : "https://open.spotify.com/";
-
-            /** TRACK PROGRESS **/
-
-            const start = spotify.timestamps?.start;
-            const end = spotify.timestamps?.end;
-
-            if (start && end && end > start && spotifyProgress) {
-
-                function updateProgress() {
-
-                    const percentage = Math.min(
-                        100,
-                        Math.max(
-                            0,
-                            ((Date.now() - start) / (end - start)) * 100
-                        )
-                    );
-
-                    spotifyProgress.style.width =
-                        percentage + "%";
-                }
-
-                updateProgress();
-
-                if (!progressTimer) {
-                    progressTimer =
-                        setInterval(updateProgress, 1000);
-                }
-
-            } else if (spotifyProgress) {
-                spotifyProgress.style.width = "0%";
-            }
-        }
-
-        /** UPDATE DISCORD PRESENCE **/
+        /** DISCORD PRESENCE **/
 
         function updatePresence(data) {
-
             if (!data) return;
 
             if (data.discord_user && avatar) {
-
                 const user = data.discord_user;
 
                 if (user.avatar) {
@@ -985,34 +784,25 @@
             }
 
             showStatus(data.discord_status || "offline");
-
-            updateSpotify(data.spotify || null);
         }
 
-        /** AVATAR FALLBACK **/
-
         if (avatar) {
-
             avatar.addEventListener("error", () => {
-
                 avatar.src =
                     "https://cdn.discordapp.com/embed/avatars/0.png";
-
             }, { once: true });
         }
 
-        /** LANYARD CONNECTION **/
+        let socket;
+        let heartbeatTimer;
+        let reconnectTimer;
 
         function connect() {
-
             if (!("WebSocket" in window)) return;
 
-            socket = new WebSocket(
-                "wss://api.lanyard.rest/socket"
-            );
+            socket = new WebSocket("wss://api.lanyard.rest/socket");
 
             socket.addEventListener("message", (event) => {
-
                 let packet;
 
                 try {
@@ -1022,20 +812,15 @@
                 }
 
                 if (packet.op === 1) {
-
                     clearInterval(heartbeatTimer);
 
                     heartbeatTimer = setInterval(() => {
-
                         if (
                             socket &&
                             socket.readyState === WebSocket.OPEN
                         ) {
-                            socket.send(
-                                JSON.stringify({ op: 3 })
-                            );
+                            socket.send(JSON.stringify({ op: 3 }));
                         }
-
                     }, packet.d.heartbeat_interval);
 
                     socket.send(JSON.stringify({
@@ -1054,7 +839,6 @@
             socket.addEventListener("close", scheduleReconnect);
 
             socket.addEventListener("error", () => {
-
                 showStatus("offline");
 
                 if (socket) {
@@ -1063,49 +847,34 @@
             });
         }
 
-        /** RECONNECT **/
-
         function scheduleReconnect() {
-
             clearInterval(heartbeatTimer);
             clearTimeout(reconnectTimer);
 
             showStatus("offline");
-            resetSpotify();
 
             reconnectTimer = setTimeout(connect, 5000);
         }
 
-        // Display saved track immediately, before Lanyard connects.
-        showLastPlayed();
-
         connect();
-
     })();
 
     /** =====================================================*
     *       9. COPY EMAIL
-    *    ===================================================== **/
+    *===================================================== **/
 
     (() => {
-
-        const copyButton =
-            document.getElementById("copy-email");
+        const copyButton = document.getElementById("copy-email");
 
         if (!copyButton) return;
 
         copyButton.addEventListener("click", async () => {
-
             const email = "muffinexe.dev@gmail.com";
 
             try {
-
                 await navigator.clipboard.writeText(email);
-
                 copyButton.textContent = "COPIED!";
-
             } catch {
-
                 copyButton.textContent = "COPY FAILED";
             }
 
@@ -1113,7 +882,6 @@
                 copyButton.textContent = "COPY";
             }, 1800);
         });
-
     })();
 
 })();
