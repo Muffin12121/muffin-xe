@@ -513,8 +513,7 @@
             });
         }
     }
-
-    /** =====================================================*
+        /** =====================================================*
     *       4. LIQUID GLASS — MOUSE REFLECTION
     *===================================================== **/
 
@@ -533,7 +532,6 @@
         glassElements.forEach((element) => {
             element.addEventListener("pointermove", (event) => {
                 const rect = element.getBoundingClientRect();
-
                 const x = event.clientX - rect.left;
                 const y = event.clientY - rect.top;
 
@@ -566,7 +564,6 @@
 
             card.addEventListener("pointermove", (event) => {
                 const rect = card.getBoundingClientRect();
-
                 const x = (event.clientX - rect.left) / rect.width;
                 const y = (event.clientY - rect.top) / rect.height;
 
@@ -603,7 +600,6 @@
         magneticButtons.forEach((button) => {
             button.addEventListener("pointermove", (event) => {
                 const rect = button.getBoundingClientRect();
-
                 const x = event.clientX - rect.left - rect.width / 2;
                 const y = event.clientY - rect.top - rect.height / 2;
 
@@ -638,9 +634,8 @@
             });
         });
     });
-
-    /** =====================================================*
-    *       8. DISCORD + SPOTIFY — SHARED CLOUDFLARE API
+        /** =====================================================*
+    *       8. DISCORD + SPOTIFY — LANYARD
     *===================================================== **/
 
     (() => {
@@ -673,103 +668,199 @@
             statusDot.className = "discord-status-dot is-" + normalized;
         }
 
-        // Cloudflare Worker API — shared track for every visitor.
         const SPOTIFY_API =
             "https://muffin-spotify-api.naitikchaudhary-alg.workers.dev/api/spotify";
 
-        async function loadSharedSpotify() {
-            if (!spotifyCard) return;
+        const LANYARD_USER_API =
+            `https://api.lanyard.rest/v1/users/${DISCORD_ID}`;
 
-            try {
-                const response = await fetch(SPOTIFY_API, {
-                    cache: "no-store"
-                });
+        let currentTrackKey = null;
+        let progressTimer = null;
+        let lastPlayedRequest = null;
+        let liveSpotifyActive = false;
 
-                if (!response.ok) {
-                    throw new Error("Spotify API request failed");
-                }
+        function stopProgress() {
+            if (progressTimer) {
+                clearInterval(progressTimer);
+                progressTimer = null;
+            }
+        }
 
-                const payload = await response.json();
+        function setSpotifyProgress(start, end) {
+            stopProgress();
 
-                const track =
-                    payload && payload.available ? payload.track : null;
+            if (!spotifyProgress) return;
 
-                if (!track) {
-                    if (spotifyTitle) {
-                        spotifyTitle.textContent = "No track saved yet";
-                    }
+            if (!start || !end || end <= start) {
+                spotifyProgress.style.width = "0%";
+                return;
+            }
 
-                    if (spotifyArtist) {
-                        spotifyArtist.textContent =
-                            "Spotify activity will appear here";
-                    }
+            const update = () => {
+                const percentage = Math.min(
+                    100,
+                    Math.max(
+                        0,
+                        ((Date.now() - start) / (end - start)) * 100
+                    )
+                );
 
-                    if (spotifyLabel) {
-                        spotifyLabel.textContent = "LAST PLAYED ON SPOTIFY";
-                    }
+                spotifyProgress.style.width = `${percentage}%`;
+            };
 
-                    return;
-                }
+            update();
+            progressTimer = setInterval(update, 1000);
+        }
 
-                if (spotifyCover) {
-                    spotifyCover.src =
-                        track.album_art ||
-                        "https://placehold.co/128x128/101725/9ba9c8?text=♫";
+        function displayTrack(track, isLive = false) {
+            if (!track || !spotifyCard) return;
 
-                    spotifyCover.alt = `Album artwork for ${track.name}`;
-                }
+            const name = track.song || track.name || "Unknown track";
+            const artist = track.artist || "Unknown artist";
+            const album = track.album || "";
 
-                if (spotifyTitle) {
-                    spotifyTitle.textContent = track.name || "Unknown track";
-                }
+            const image =
+                track.album_art_url ||
+                track.album_art ||
+                "https://placehold.co/128x128/101725/9ba9c8?text=♫";
 
-                if (spotifyArtist) {
-                    spotifyArtist.textContent =
-                        track.artist || "Unknown artist";
+            const trackId = track.track_id || track.id || "";
 
-                    if (track.album) {
-                        spotifyArtist.textContent += ` · ${track.album}`;
-                    }
-                }
+            const trackUrl = trackId
+                ? `https://open.spotify.com/track/${encodeURIComponent(trackId)}`
+                : (track.url || "https://open.spotify.com/");
 
-                if (spotifyLabel) {
-                    spotifyLabel.textContent = "LAST PLAYED ON SPOTIFY";
-                }
+            const key = `${trackId}|${name}|${artist}`;
 
-                if (track.url) {
-                    spotifyCard.href = track.url;
-                }
+            if (key !== currentTrackKey) {
+                currentTrackKey = key;
+            }
+
+            if (spotifyCover) {
+                spotifyCover.src = image;
+                spotifyCover.alt = `Album artwork for ${name}`;
+            }
+
+            if (spotifyTitle) {
+                spotifyTitle.textContent = name;
+            }
+
+            if (spotifyArtist) {
+                spotifyArtist.textContent = album
+                    ? `${artist} · ${album}`
+                    : artist;
+            }
+
+            if (spotifyLabel) {
+                spotifyLabel.textContent = isLive
+                    ? "NOW PLAYING ON SPOTIFY"
+                    : "LAST PLAYED ON SPOTIFY";
+            }
+
+            spotifyCard.href = trackUrl;
+
+            if (isLive && track.timestamps) {
+                setSpotifyProgress(
+                    track.timestamps.start,
+                    track.timestamps.end
+                );
+            } else {
+                stopProgress();
 
                 if (spotifyProgress) {
                     spotifyProgress.style.width = "0%";
                 }
-
-            } catch (error) {
-                console.warn(
-                    "Could not load shared Spotify track:",
-                    error
-                );
-
-                if (spotifyLabel) {
-                    spotifyLabel.textContent = "SPOTIFY ACTIVITY";
-                }
-
-                if (spotifyTitle) {
-                    spotifyTitle.textContent = "Unable to load track";
-                }
-
-                if (spotifyArtist) {
-                    spotifyArtist.textContent =
-                        "Please try again shortly";
-                }
             }
         }
 
-        // Load immediately and refresh every 60 seconds.
-        loadSharedSpotify();
-        setInterval(loadSharedSpotify, 60000);
+        async function loadLastPlayedSpotify() {
+            if (!spotifyCard || liveSpotifyActive) return;
+            if (lastPlayedRequest) return lastPlayedRequest;
 
-        /** DISCORD PRESENCE **/
+            lastPlayedRequest = (async () => {
+                try {
+                    const response = await fetch(
+                        `${SPOTIFY_API}?t=${Date.now()}`,
+                        { cache: "no-store" }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(
+                            `Spotify API returned ${response.status}`
+                        );
+                    }
+
+                    const payload = await response.json();
+
+                    if (liveSpotifyActive) return;
+
+                    const track =
+                        payload && payload.available
+                            ? payload.track
+                            : null;
+
+                    if (track) {
+                        displayTrack(track, false);
+                    } else {
+                        stopProgress();
+
+                        if (spotifyLabel) {
+                            spotifyLabel.textContent = "SPOTIFY ACTIVITY";
+                        }
+
+                        if (spotifyTitle) {
+                            spotifyTitle.textContent = "Nothing playing";
+                        }
+
+                        if (spotifyArtist) {
+                            spotifyArtist.textContent =
+                                "Your last played track will appear here";
+                        }
+
+                        if (spotifyProgress) {
+                            spotifyProgress.style.width = "0%";
+                        }
+                    }
+                } catch (error) {
+                    console.warn(
+                        "Could not load last-played Spotify track:",
+                        error
+                    );
+
+                    if (!liveSpotifyActive && spotifyTitle) {
+                        spotifyTitle.textContent = "Unable to load track";
+                    }
+                } finally {
+                    lastPlayedRequest = null;
+                }
+            })();
+
+            return lastPlayedRequest;
+        }
+
+        function updateSpotify(spotify) {
+            if (spotify && spotify.song) {
+                liveSpotifyActive = true;
+                displayTrack(spotify, true);
+                return;
+            }
+
+            liveSpotifyActive = false;
+            stopProgress();
+
+            // When playback stops, show the most recently saved track from D1.
+            loadLastPlayedSpotify();
+        }
+
+        // Load a saved track immediately; the live Lanyard socket takes priority.
+        loadLastPlayedSpotify();
+
+        // Refresh the saved fallback periodically.
+        setInterval(() => {
+            if (!liveSpotifyActive) {
+                loadLastPlayedSpotify();
+            }
+        }, 30000);
 
         function updatePresence(data) {
             if (!data) return;
@@ -784,6 +875,7 @@
             }
 
             showStatus(data.discord_status || "offline");
+            updateSpotify(data.spotify);
         }
 
         if (avatar) {
@@ -857,6 +949,26 @@
         }
 
         connect();
+
+        fetch(LANYARD_USER_API, { cache: "no-store" })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`Lanyard returned ${response.status}`);
+                }
+
+                return response.json();
+            })
+            .then((payload) => {
+                if (payload && payload.success && payload.data) {
+                    updatePresence(payload.data);
+                }
+            })
+            .catch((error) => {
+                console.warn(
+                    "Could not load initial Lanyard presence:",
+                    error
+                );
+            });
     })();
 
     /** =====================================================*
