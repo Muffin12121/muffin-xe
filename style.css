@@ -2608,46 +2608,47 @@ button:focus-visible {
     line-height: 1.5;
 }
 
-/* EXPERIENCE DETAILS MODAL */
+/* EXPERIENCE DETAILS — FROSTED GLASS GRID */
 .experience-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    display: grid;
-    place-items: center;
-    padding: 24px;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity .3s ease, visibility .3s ease;
+    position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center;
+    padding: 112px 24px 28px; opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity .35s ease, visibility .35s ease;
 }
 .experience-modal.is-open { opacity: 1; visibility: visible; pointer-events: auto; }
-.experience-backdrop { position: absolute; inset: 0; background: rgba(3, 5, 10, .78); backdrop-filter: blur(14px); }
-.experience-dialog {
-    position: relative; width: min(100%, 560px); max-height: min(80vh, 680px); overflow-y: auto;
-    padding: clamp(28px, 5vw, 48px); border: 1px solid rgba(160, 180, 220, .18);
-    border-radius: 22px; background: linear-gradient(145deg, rgba(22, 27, 39, .97), rgba(10, 13, 21, .98));
-    box-shadow: 0 30px 100px rgba(0,0,0,.5); transform: translateY(18px) scale(.98);
-    transition: transform .3s ease;
+.experience-backdrop {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 35%, rgba(42,67,111,.24), rgba(3,6,13,.72) 68%);
+    -webkit-backdrop-filter: blur(18px) saturate(145%); backdrop-filter: blur(18px) saturate(145%);
 }
+.experience-dialog {
+    position: relative; width: min(100%, 1000px); max-height: min(76vh, 720px); overflow-y: auto;
+    padding: clamp(26px, 4vw, 44px); border: 1px solid rgba(190,211,255,.38); border-radius: 28px;
+    background: linear-gradient(135deg, rgba(24,34,55,.70), rgba(8,14,27,.76));
+    -webkit-backdrop-filter: blur(28px) saturate(160%); backdrop-filter: blur(28px) saturate(160%);
+    box-shadow: 0 30px 100px rgba(0,0,0,.58), inset 0 1px 0 rgba(255,255,255,.16), 0 0 42px rgba(111,153,229,.10);
+    transform: translateY(20px) scale(.975); transition: transform .42s cubic-bezier(.2,.8,.2,1);
+    scrollbar-width: thin; scrollbar-color: rgba(142,177,239,.55) transparent;
+}
+.experience-dialog::before { content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background:linear-gradient(115deg,rgba(255,255,255,.10),transparent 26%,transparent 70%,rgba(127,165,236,.07)); }
 .experience-modal.is-open .experience-dialog { transform: translateY(0) scale(1); }
-.experience-close { position: absolute; top: 17px; right: 20px; width: 38px; height: 38px; border: 1px solid rgba(255,255,255,.14); border-radius: 50%; background: rgba(255,255,255,.04); color: #dce3f2; font-size: 25px; cursor: pointer; }
-.experience-kicker { display: block; margin-bottom: 18px; color: #8294b8; font-size: 10px; letter-spacing: 2.2px; }
-.experience-dialog h3 { margin: 0; color: #f0f3fa; font-size: clamp(28px, 5vw, 42px); font-weight: 500; letter-spacing: -1.5px; }
-.experience-position { margin: 10px 0 26px; color: #8fa9d8; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
-.experience-details { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
-.experience-details li { position: relative; padding-left: 20px; color: #aeb7c9; font-size: 14px; line-height: 1.75; }
-.experience-details li::before { content: ''; position: absolute; top: 10px; left: 0; width: 5px; height: 5px; border-radius: 50%; background: #829bd0; box-shadow: 0 0 12px rgba(130,155,208,.5); }
-body.experience-modal-open { overflow: hidden; }
-@media (max-width: 600px) { .experience-modal { padding: 14px; } .experience-dialog { border-radius: 17px; } .experience-details li { font-size: 13px; } }
-@media (prefers-reduced-motion: reduce) { .experience-modal, .experience-dialog { transition: none; } }
-
-.experience-details { display: grid; gap: 25px; margin-top: 28px; }
-.experience-entry { padding-top: 20px; border-top: 1px solid rgba(160,180,220,.13); }
-.experience-entry:first-child { padding-top: 0; border-top: 0; }
-.experience-entry-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
-.experience-entry-heading h4 { margin: 0; color: #e8edf8; font-size: 15px; font-weight: 500; letter-spacing: .1px; }
-.experience-entry-heading span { color: #8fa9d8; font-size: 9px; letter-spacing: 1.2px; text-transform: uppercase; }
-.experience-entry ul { display: grid; gap: 8px; margin: 13px 0 0; padding: 0; list-style: none; }
-.experience-entry li { position: relative; padding-left: 16px; color: #aeb7c9; font-size: 12px; line-height: 1.7; }
-.experience-entry li::before { content: ''; position: absolute; top: 8px; left: 0; width: 4px; height: 4px; border-radius: 50%; background: #829bd0; }
+.experience-close { position:absolute; top:18px; right:20px; z-index:2; display:grid; place-items:center; width:46px; height:46px; border:1px solid rgba(205,220,255,.25); border-radius:50%; background:rgba(255,255,255,.07); color:#eef4ff; font-size:25px; cursor:pointer; transition:background .25s,border-color .25s,transform .25s; }
+.experience-close:hover { background:rgba(142,177,239,.2); border-color:rgba(190,215,255,.7); transform:rotate(90deg); }
+.experience-kicker { display:block; margin-bottom:16px; color:#9fb8e6; font-size:10px; letter-spacing:3px; }
+.experience-dialog h3 { margin:0; color:#f2f6ff; font-size:clamp(34px,5vw,52px); font-weight:500; letter-spacing:-2px; }
+.experience-details { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; margin-top:30px; }
+.experience-entry { position:relative; min-width:0; padding:20px 22px 22px; overflow:hidden; border:1px solid rgba(170,198,249,.28); border-radius:17px; background:linear-gradient(135deg,rgba(255,255,255,.075),rgba(113,151,216,.035)); box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 12px 32px rgba(0,0,0,.14); transition:transform .3s,border-color .3s,background .3s,box-shadow .3s; }
+.experience-entry::after { content:""; position:absolute; width:180px; height:180px; right:-90px; bottom:-115px; border-radius:50%; background:rgba(113,160,255,.12); filter:blur(35px); pointer-events:none; }
+.experience-entry:hover { transform:translateY(-4px); border-color:rgba(175,207,255,.58); background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(102,148,226,.08)); box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 18px 38px rgba(0,0,0,.23),0 0 24px rgba(111,153,229,.09); }
+.experience-entry-heading { position:relative; z-index:1; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
+.experience-entry-heading h4 { margin:0; color:#f0f4ff; font-size:17px; font-weight:500; letter-spacing:-.2px; }
+.experience-entry-heading span { color:#8eb8ff; font-size:9px; letter-spacing:2px; text-transform:uppercase; }
+.experience-entry ul { position:relative; z-index:1; display:grid; gap:7px; margin:17px 0 0; padding:0; list-style:none; }
+.experience-entry li { position:relative; padding-left:15px; color:#c0cce1; font-size:12px; line-height:1.65; }
+.experience-entry li::before { content:""; position:absolute; top:8px; left:0; width:5px; height:5px; border-radius:50%; background:#91b9ff; box-shadow:0 0 10px rgba(145,185,255,.7); }
+body.experience-modal-open { overflow:hidden; }
+/* Subtle custom cursor: desktop only */
+.cursor-glow { position:fixed; z-index:9999; top:0; left:0; width:260px; height:260px; border-radius:50%; pointer-events:none; opacity:0; background:radial-gradient(circle,rgba(111,157,255,.105),rgba(111,157,255,.035) 34%,transparent 70%); transform:translate(-50%,-50%); transition:opacity .25s; mix-blend-mode:screen; }
+body.cursor-ready .cursor-glow { opacity:1; }
+@media (pointer:coarse) { .cursor-glow { display:none; } }
+@media (max-width:760px) { .experience-modal { padding:100px 15px 18px; } .experience-dialog { max-height:78vh; padding:27px 20px; border-radius:21px; } .experience-details { grid-template-columns:1fr; gap:12px; margin-top:22px; } .experience-entry { padding:18px; } }
+@media (prefers-reduced-motion:reduce) { .experience-modal,.experience-dialog,.experience-entry,.experience-close { transition:none!important; } }
