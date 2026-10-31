@@ -972,7 +972,89 @@
     })();
 
     /** =====================================================*
-    *       9. COPY EMAIL
+    *       9. EXPERIENCE DETAILS
+    *===================================================== **/
+
+    (() => {
+        const modal = document.getElementById("experience-modal");
+        const details = document.getElementById("experience-details");
+        const experienceCard = document.querySelector('.project-item[data-experience="all"]');
+
+        if (!modal || !details || !experienceCard) return;
+
+        const experiences = [
+            { name: "Blitz Tierlist", role: "Moderator", points: [
+                "Handled support tickets and member queries.",
+                "Managed overall server chat and community interactions.",
+                "Conducted high-tier tests."
+            ] },
+            { name: "Alpine Tierlist", role: "Moderator", points: [
+                "Handled support tickets.",
+                "Managed overall server chat and member interactions.",
+                "Assisted with high-tier testing."
+            ] },
+            { name: "Discord Python Hub", role: "Community Moderator", points: [
+                "Helped programmers with Python-related questions.",
+                "Assisted members with coding problems and technical discussions.",
+                "Moderated community interactions."
+            ] },
+            { name: "Adorability", role: "Server Oversight", points: [
+                "Oversaw the entire server and its overall operations."
+            ] }
+        ];
+
+        let previousFocus = null;
+
+        function closeModal() {
+            modal.classList.remove("is-open");
+            modal.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("experience-modal-open");
+            if (previousFocus) previousFocus.focus();
+        }
+
+        experienceCard.addEventListener("click", (event) => {
+            event.preventDefault();
+            previousFocus = experienceCard;
+            details.replaceChildren(...experiences.map((experience, index) => {
+                const article = document.createElement("article");
+                article.className = "experience-entry";
+
+                const heading = document.createElement("div");
+                heading.className = "experience-entry-heading";
+                const name = document.createElement("h4");
+                name.textContent = `${String(index + 1).padStart(2, "0")} / ${experience.name}`;
+                const role = document.createElement("span");
+                role.textContent = experience.role;
+                heading.append(name, role);
+
+                const list = document.createElement("ul");
+                experience.points.forEach((point) => {
+                    const item = document.createElement("li");
+                    item.textContent = point;
+                    list.append(item);
+                });
+
+                article.append(heading, list);
+                return article;
+            }));
+
+            modal.classList.add("is-open");
+            modal.setAttribute("aria-hidden", "false");
+            document.body.classList.add("experience-modal-open");
+            modal.querySelector(".experience-close").focus();
+        });
+
+        modal.querySelectorAll("[data-close-experience]").forEach((control) => {
+            control.addEventListener("click", closeModal);
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+        });
+    })();
+
+    /** =====================================================*
+    *       10. COPY EMAIL
     *===================================================== **/
 
     (() => {
