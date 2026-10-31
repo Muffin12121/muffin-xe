@@ -972,85 +972,97 @@
     })();
 
     /** =====================================================*
-    *       9. EXPERIENCE DETAILS
+    *       9. PROJECT & EXPERIENCE MODALS
     *===================================================== **/
 
     (() => {
-        const modal = document.getElementById("experience-modal");
-        const details = document.getElementById("experience-details");
-        const experienceCard = document.querySelector('.project-item[data-experience="all"]');
+        const content = {
+            experiences: {
+                modal: "experiences-modal", details: "experiences-details",
+                entries: [
+                    { name: "Blitz Tierlist", role: "Moderator", points: ["Handled support tickets and member queries.", "Managed overall server chat and community interactions.", "Conducted high-tier tests."] },
+                    { name: "Alpine Tierlist", role: "Moderator", points: ["Handled support tickets.", "Managed overall server chat and member interactions.", "Assisted with high-tier testing."] },
+                    { name: "Discord Python Hub", role: "Community Moderator", points: ["Helped programmers with Python-related questions.", "Assisted members with coding problems and technical discussions.", "Moderated community interactions."] },
+                    { name: "Adorability", role: "Server Oversight", points: ["Oversaw the entire server and its overall operations."] }
+                ]
+            },
+            creations: {
+                modal: "creations-modal", details: "creations-details",
+                entries: [
+                    { name: "Dusk Discord Bot", role: "MULTIPURPOSE DISCORD BOT", points: ["Built a multipurpose Discord bot for server management.", "Included moderation, welcome, autorole and boost features.", "Developed utilities and automation for Discord communities."] },
+                    { name: "Kraven Discord Bot", role: "DISCORD BOT", points: ["Developed bot features and utilities for the Kraven community.", "Worked on ticket management and staff-focused tools.", "Supported community operations and server workflows."] },
+                    { name: "Muffin Chan Discord Bot", role: "SOLD TO A DEVELOPER TEAM", points: ["Built as a more feature-rich bot, with roughly twice the scope of Dusk.", "Included custom messages and server automation.", "Featured anti-nuke protection to help safeguard servers."] },
+                    { name: "Dusk Minecraft Client", role: "SOLD TO A DEVELOPER TEAM", points: ["Designed a custom Minecraft launcher using C# and WPF.", "Planned profile management, Minecraft versions and Fabric/Forge support.", "Included mod management and performance configuration in the launcher concept."] }
+                ]
+            },
+            kraven: {
+                modal: "kraven-modal", details: "kraven-details",
+                entries: [
+                    { name: "Co-Founder", role: "PROJECT LEADERSHIP", points: ["Co-founded the Kraven project and helped build its community."] },
+                    { name: "Bot Manager", role: "BOT MANAGEMENT", points: ["Manage and oversee the Kraven Discord bot.", "Handle bot configuration, features and development.", "Maintain bot functionality and coordinate updates."] }
+                ]
+            }
+        };
 
-        if (!modal || !details || !experienceCard) return;
-
-        const experiences = [
-            { name: "Blitz Tierlist", role: "Moderator", points: [
-                "Handled support tickets and member queries.",
-                "Managed overall server chat and community interactions.",
-                "Conducted high-tier tests."
-            ] },
-            { name: "Alpine Tierlist", role: "Moderator", points: [
-                "Handled support tickets.",
-                "Managed overall server chat and member interactions.",
-                "Assisted with high-tier testing."
-            ] },
-            { name: "Discord Python Hub", role: "Community Moderator", points: [
-                "Helped programmers with Python-related questions.",
-                "Assisted members with coding problems and technical discussions.",
-                "Moderated community interactions."
-            ] },
-            { name: "Adorability", role: "Server Oversight", points: [
-                "Oversaw the entire server and its overall operations."
-            ] }
-        ];
-
+        let activeModal = null;
         let previousFocus = null;
 
         function closeModal() {
-            modal.classList.remove("is-open");
-            modal.setAttribute("aria-hidden", "true");
+            if (!activeModal) return;
+            activeModal.classList.remove("is-open");
+            activeModal.setAttribute("aria-hidden", "true");
             document.body.classList.remove("experience-modal-open");
+            activeModal = null;
             if (previousFocus) previousFocus.focus();
         }
 
-        experienceCard.addEventListener("click", (event) => {
-            event.preventDefault();
-            previousFocus = experienceCard;
-            details.replaceChildren(...experiences.map((experience, index) => {
+        function openModal(key, trigger) {
+            const config = content[key];
+            if (!config) return;
+            const modal = document.getElementById(config.modal);
+            const details = document.getElementById(config.details);
+            if (!modal || !details) return;
+
+            previousFocus = trigger;
+            details.replaceChildren(...config.entries.map((entry, index) => {
                 const article = document.createElement("article");
                 article.className = "experience-entry";
                 article.style.setProperty("--entry-index", index);
-
                 const heading = document.createElement("div");
                 heading.className = "experience-entry-heading";
                 const name = document.createElement("h4");
-                name.textContent = `${String(index + 1).padStart(2, "0")} / ${experience.name}`;
+                name.textContent = `${String(index + 1).padStart(2, "0")} / ${entry.name}`;
                 const role = document.createElement("span");
-                role.textContent = experience.role;
+                role.textContent = entry.role;
                 heading.append(name, role);
-
                 const list = document.createElement("ul");
-                experience.points.forEach((point) => {
+                entry.points.forEach((point) => {
                     const item = document.createElement("li");
                     item.textContent = point;
                     list.append(item);
                 });
-
                 article.append(heading, list);
                 return article;
             }));
 
+            activeModal = modal;
             modal.classList.add("is-open");
             modal.setAttribute("aria-hidden", "false");
             document.body.classList.add("experience-modal-open");
             modal.querySelector(".experience-close").focus();
-        });
+        }
 
-        modal.querySelectorAll("[data-close-experience]").forEach((control) => {
+        document.querySelectorAll("[data-open-modal]").forEach((trigger) => {
+            trigger.addEventListener("click", (event) => {
+                event.preventDefault();
+                openModal(trigger.dataset.openModal, trigger);
+            });
+        });
+        document.querySelectorAll("[data-close-modal]").forEach((control) => {
             control.addEventListener("click", closeModal);
         });
-
         document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+            if (event.key === "Escape") closeModal();
         });
     })();
 
