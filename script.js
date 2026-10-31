@@ -998,7 +998,7 @@
             kraven: {
                 modal: "kraven-modal", details: "kraven-details",
                 entries: [
-                    { name: "Co-Founder", role: "PROJECT LEADERSHIP", points: ["Co-founded the Kraven project and helped build its community."] },
+                    { name: "Co-Founder", role: "PROJECT LEADERSHIP", points: ["Co-founded Kraven."] },
                     { name: "Bot Manager", role: "BOT MANAGEMENT", points: ["Manage and oversee the Kraven Discord bot.", "Handle bot configuration, features and development.", "Maintain bot functionality and coordinate updates."] }
                 ]
             }
