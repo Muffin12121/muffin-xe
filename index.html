@@ -131,10 +131,10 @@
             </div>
 
             <div class="project-list">
-                <a href="#" class="project-item">
+                <a href="#" class="project-item" data-experience="all">
                     <span class="project-number">01</span>
                     <span class="project-name">Experiences</span>
-                    <span class="project-type">MODERATION & MANAGEMENT</span>
+                    <span class="project-type">ROLES & CONTRIBUTIONS</span>
                     <span class="project-arrow">↗</span>
                 </a>
 
@@ -151,6 +151,16 @@
                     <span class="project-type">COMMUNITY</span>
                     <span class="project-arrow">↗</span>
                 </a>
+            </div>
+
+            <div class="experience-modal" id="experience-modal" aria-hidden="true">
+                <div class="experience-backdrop" data-close-experience></div>
+                <section class="experience-dialog" role="dialog" aria-modal="true" aria-labelledby="experience-title">
+                    <button class="experience-close" type="button" aria-label="Close experience details" data-close-experience>×</button>
+                    <span class="experience-kicker">ROLES & CONTRIBUTIONS</span>
+                    <h3 id="experience-title">Experiences</h3>
+                    <div class="experience-details" id="experience-details"></div>
+                </section>
             </div>
         </section>
 
