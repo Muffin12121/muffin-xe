@@ -2607,3 +2607,47 @@ button:focus-visible {
     letter-spacing: 0.3px;
     line-height: 1.5;
 }
+
+/* EXPERIENCE DETAILS MODAL */
+.experience-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .3s ease, visibility .3s ease;
+}
+.experience-modal.is-open { opacity: 1; visibility: visible; pointer-events: auto; }
+.experience-backdrop { position: absolute; inset: 0; background: rgba(3, 5, 10, .78); backdrop-filter: blur(14px); }
+.experience-dialog {
+    position: relative; width: min(100%, 560px); max-height: min(80vh, 680px); overflow-y: auto;
+    padding: clamp(28px, 5vw, 48px); border: 1px solid rgba(160, 180, 220, .18);
+    border-radius: 22px; background: linear-gradient(145deg, rgba(22, 27, 39, .97), rgba(10, 13, 21, .98));
+    box-shadow: 0 30px 100px rgba(0,0,0,.5); transform: translateY(18px) scale(.98);
+    transition: transform .3s ease;
+}
+.experience-modal.is-open .experience-dialog { transform: translateY(0) scale(1); }
+.experience-close { position: absolute; top: 17px; right: 20px; width: 38px; height: 38px; border: 1px solid rgba(255,255,255,.14); border-radius: 50%; background: rgba(255,255,255,.04); color: #dce3f2; font-size: 25px; cursor: pointer; }
+.experience-kicker { display: block; margin-bottom: 18px; color: #8294b8; font-size: 10px; letter-spacing: 2.2px; }
+.experience-dialog h3 { margin: 0; color: #f0f3fa; font-size: clamp(28px, 5vw, 42px); font-weight: 500; letter-spacing: -1.5px; }
+.experience-position { margin: 10px 0 26px; color: #8fa9d8; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
+.experience-details { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.experience-details li { position: relative; padding-left: 20px; color: #aeb7c9; font-size: 14px; line-height: 1.75; }
+.experience-details li::before { content: ''; position: absolute; top: 10px; left: 0; width: 5px; height: 5px; border-radius: 50%; background: #829bd0; box-shadow: 0 0 12px rgba(130,155,208,.5); }
+body.experience-modal-open { overflow: hidden; }
+@media (max-width: 600px) { .experience-modal { padding: 14px; } .experience-dialog { border-radius: 17px; } .experience-details li { font-size: 13px; } }
+@media (prefers-reduced-motion: reduce) { .experience-modal, .experience-dialog { transition: none; } }
+
+.experience-details { display: grid; gap: 25px; margin-top: 28px; }
+.experience-entry { padding-top: 20px; border-top: 1px solid rgba(160,180,220,.13); }
+.experience-entry:first-child { padding-top: 0; border-top: 0; }
+.experience-entry-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+.experience-entry-heading h4 { margin: 0; color: #e8edf8; font-size: 15px; font-weight: 500; letter-spacing: .1px; }
+.experience-entry-heading span { color: #8fa9d8; font-size: 9px; letter-spacing: 1.2px; text-transform: uppercase; }
+.experience-entry ul { display: grid; gap: 8px; margin: 13px 0 0; padding: 0; list-style: none; }
+.experience-entry li { position: relative; padding-left: 16px; color: #aeb7c9; font-size: 12px; line-height: 1.7; }
+.experience-entry li::before { content: ''; position: absolute; top: 8px; left: 0; width: 4px; height: 4px; border-radius: 50%; background: #829bd0; }
