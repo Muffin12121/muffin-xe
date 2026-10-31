@@ -1018,6 +1018,7 @@
             details.replaceChildren(...experiences.map((experience, index) => {
                 const article = document.createElement("article");
                 article.className = "experience-entry";
+                article.style.setProperty("--entry-index", index);
 
                 const heading = document.createElement("div");
                 heading.className = "experience-entry-heading";
@@ -1076,6 +1077,25 @@
                 copyButton.textContent = "COPY";
             }, 1800);
         });
+    })();
+
+
+    /** Soft cursor light for desktop */
+    (() => {
+        if (window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const glow = document.createElement("div");
+        glow.className = "cursor-glow";
+        document.body.appendChild(glow);
+        let frame = 0;
+        window.addEventListener("pointermove", (event) => {
+            if (frame) cancelAnimationFrame(frame);
+            frame = requestAnimationFrame(() => {
+                glow.style.left = `${event.clientX}px`;
+                glow.style.top = `${event.clientY}px`;
+                document.body.classList.add("cursor-ready");
+            });
+        }, { passive: true });
+        window.addEventListener("pointerleave", () => document.body.classList.remove("cursor-ready"));
     })();
 
 })();
