@@ -1,5 +1,5 @@
 /** =========================================================*
-*   MUFFIN — CINEMATIC PORTFOLIO
+*   MUFFIN — PERSONAL WEBSITE
 *   Three.js + Earth + Geometry + GSAP + Discord + Spotify
 *========================================================= **/
 
@@ -998,7 +998,7 @@
             kraven: {
                 modal: "kraven-modal", details: "kraven-details",
                 entries: [
-                    { name: "Co-Founder", role: "PROJECT LEADERSHIP", points: ["Co-founded Kraven."] },
+                    { name: "Co-Founder", role: "PROJECT LEADERSHIP", points: ["Co-founded the Kraven project and helped build its community."] },
                     { name: "Bot Manager", role: "BOT MANAGEMENT", points: ["Manage and oversee the Kraven Discord bot.", "Handle bot configuration, features and development.", "Maintain bot functionality and coordinate updates."] }
                 ]
             }
