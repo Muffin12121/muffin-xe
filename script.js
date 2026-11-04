@@ -1,5 +1,5 @@
 /** =========================================================*
-*   MUFFIN — PERSONAL WEBSITE
+*   MUFFIN — ABOUT ME
 *   Three.js + Earth + Geometry + GSAP + Discord + Spotify
 *========================================================= **/
 
@@ -520,7 +520,6 @@
     if (!isTouchDevice) {
         const glassElements = document.querySelectorAll(`
             .discord-card,
-            .modrinth-button,
             .project-item,
             .vibe-card,
             .spotify-card,
@@ -553,7 +552,6 @@
     if (!isTouchDevice && !prefersReducedMotion) {
         const tiltCards = document.querySelectorAll(`
             .discord-card,
-            .modrinth-button,
             .project-item,
             .vibe-card,
             .spotify-card
@@ -593,7 +591,6 @@
         const magneticButtons = document.querySelectorAll(`
             .primary-button,
             .nav-contact,
-            .modrinth-button,
             #copy-email
         `);
 
@@ -998,7 +995,7 @@
             kraven: {
                 modal: "kraven-modal", details: "kraven-details",
                 entries: [
-                    { name: "Co-Founder", role: "PROJECT LEADERSHIP", points: ["Co-founded the Kraven."] },
+                    { name: "Co-Founder", role: "PROJECT LEADERSHIP", points: ["Co-founded the Kraven project and helped build its community."] },
                     { name: "Bot Manager", role: "BOT MANAGEMENT", points: ["Manage and oversee the Kraven Discord bot.", "Handle bot configuration, features and development.", "Maintain bot functionality and coordinate updates."] }
                 ]
             }
@@ -1092,22 +1089,61 @@
     })();
 
 
-    /** Soft cursor light for desktop */
+    /** Smooth custom cursor: soft glow + lagging glass ring */
     (() => {
-        if (window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const finePointer = window.matchMedia("(pointer: fine)").matches;
+        if (!finePointer || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
         const glow = document.createElement("div");
         glow.className = "cursor-glow";
-        document.body.appendChild(glow);
-        let frame = 0;
-        window.addEventListener("pointermove", (event) => {
-            if (frame) cancelAnimationFrame(frame);
-            frame = requestAnimationFrame(() => {
-                glow.style.left = `${event.clientX}px`;
-                glow.style.top = `${event.clientY}px`;
-                document.body.classList.add("cursor-ready");
-            });
-        }, { passive: true });
-        window.addEventListener("pointerleave", () => document.body.classList.remove("cursor-ready"));
+        const ring = document.createElement("div");
+        ring.className = "cursor-ring";
+        const dot = document.createElement("div");
+        dot.className = "cursor-dot";
+        document.body.append(glow, ring, dot);
+
+        let targetX = window.innerWidth / 2;
+        let targetY = window.innerHeight / 2;
+        let ringX = targetX;
+        let ringY = targetY;
+        let pointerInside = false;
+
+        const move = (event) => {
+            targetX = event.clientX;
+            targetY = event.clientY;
+            pointerInside = true;
+            document.body.classList.add("cursor-ready");
+            dot.style.left = `${targetX}px`;
+            dot.style.top = `${targetY}px`;
+            glow.style.left = `${targetX}px`;
+            glow.style.top = `${targetY}px`;
+        };
+
+        const animate = () => {
+            ringX += (targetX - ringX) * 0.16;
+            ringY += (targetY - ringY) * 0.16;
+            ring.style.left = `${ringX}px`;
+            ring.style.top = `${ringY}px`;
+            requestAnimationFrame(animate);
+        };
+
+        window.addEventListener("pointermove", move, { passive: true });
+        window.addEventListener("pointerleave", () => {
+            pointerInside = false;
+            document.body.classList.remove("cursor-ready");
+        });
+        document.addEventListener("pointerover", (event) => {
+            if (event.target.closest("a, button, [role='button'], input, textarea, select")) {
+                document.body.classList.add("cursor-hover");
+            }
+        });
+        document.addEventListener("pointerout", (event) => {
+            if (event.target.closest("a, button, [role='button'], input, textarea, select")) {
+                document.body.classList.remove("cursor-hover");
+            }
+        });
+
+        animate();
     })();
 
 })();
