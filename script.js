@@ -1089,61 +1089,91 @@
     })();
 
 
-    /** Smooth custom cursor: soft glow + lagging glass ring */
+    /** SWARM CURSOR — multiple animated pointers follow the mouse */
     (() => {
-        const finePointer = window.matchMedia("(pointer: fine)").matches;
-        if (!finePointer || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+        if (reducedMotion || coarsePointer) return;
 
-        const glow = document.createElement("div");
-        glow.className = "cursor-glow";
-        const ring = document.createElement("div");
-        ring.className = "cursor-ring";
-        const dot = document.createElement("div");
-        dot.className = "cursor-dot";
-        document.body.append(glow, ring, dot);
+        const canvas = document.createElement("canvas");
+        canvas.className = "swarm-cursor-canvas";
+        canvas.setAttribute("aria-hidden", "true");
+        document.body.appendChild(canvas);
+        const ctx = canvas.getContext("2d", { alpha: true });
+        if (!ctx) { canvas.remove(); return; }
 
-        let targetX = window.innerWidth / 2;
-        let targetY = window.innerHeight / 2;
-        let ringX = targetX;
-        let ringY = targetY;
-        let pointerInside = false;
+        let width = 0, height = 0, dpr = 1;
+        const pointer = { x: -100, y: -100, active: false };
+        const cursors = Array.from({ length: 13 }, (_, i) => ({
+            x: -100, y: -100, vx: 0, vy: 0,
+            lag: 0.12 + (i * 0.012),
+            size: Math.max(5, 10 - i * 0.32),
+            alpha: 0.78 - i * 0.043,
+            hue: 215 + i * 2.2
+        }));
 
-        const move = (event) => {
-            targetX = event.clientX;
-            targetY = event.clientY;
-            pointerInside = true;
-            document.body.classList.add("cursor-ready");
-            dot.style.left = `${targetX}px`;
-            dot.style.top = `${targetY}px`;
-            glow.style.left = `${targetX}px`;
-            glow.style.top = `${targetY}px`;
+        const resize = () => {
+            dpr = Math.min(window.devicePixelRatio || 1, 1.7);
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = Math.round(width * dpr);
+            canvas.height = Math.round(height * dpr);
+            canvas.style.width = `${width}px`;
+            canvas.style.height = `${height}px`;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
+        resize();
+        window.addEventListener("resize", resize, { passive: true });
+        window.addEventListener("pointermove", event => {
+            pointer.x = event.clientX;
+            pointer.y = event.clientY;
+            pointer.active = true;
+        }, { passive: true });
+        window.addEventListener("pointerleave", () => { pointer.active = false; }, { passive: true });
+        window.addEventListener("blur", () => { pointer.active = false; });
+
+        let raf = 0;
+        const drawPointer = (x, y, size, alpha, hue, index) => {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.globalAlpha = alpha;
+            ctx.shadowColor = `hsla(${hue}, 90%, 75%, .7)`;
+            ctx.shadowBlur = index === 0 ? 16 : 8;
+            ctx.fillStyle = `hsla(${hue}, 90%, ${index === 0 ? 88 : 76}%, 1)`;
+            ctx.strokeStyle = "rgba(5, 10, 22, .8)";
+            ctx.lineWidth = 1.05;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(size * .72, size * 1.9);
+            ctx.lineTo(size * .98, size * 1.15);
+            ctx.lineTo(size * 1.72, size * 1.02);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
         };
 
         const animate = () => {
-            ringX += (targetX - ringX) * 0.16;
-            ringY += (targetY - ringY) * 0.16;
-            ring.style.left = `${ringX}px`;
-            ring.style.top = `${ringY}px`;
-            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, width, height);
+            if (pointer.active) {
+                cursors.forEach((cursor, i) => {
+                    const previous = cursors[i - 1];
+                    const targetX = i === 0 ? pointer.x : previous.x;
+                    const targetY = i === 0 ? pointer.y : previous.y;
+                    const follow = i === 0 ? 0.48 : cursor.lag;
+                    cursor.x += (targetX - cursor.x) * follow;
+                    cursor.y += (targetY - cursor.y) * follow;
+                    drawPointer(cursor.x, cursor.y, cursor.size, cursor.alpha, cursor.hue, i);
+                });
+            }
+            raf = requestAnimationFrame(animate);
         };
-
-        window.addEventListener("pointermove", move, { passive: true });
-        window.addEventListener("pointerleave", () => {
-            pointerInside = false;
-            document.body.classList.remove("cursor-ready");
-        });
-        document.addEventListener("pointerover", (event) => {
-            if (event.target.closest("a, button, [role='button'], input, textarea, select")) {
-                document.body.classList.add("cursor-hover");
-            }
-        });
-        document.addEventListener("pointerout", (event) => {
-            if (event.target.closest("a, button, [role='button'], input, textarea, select")) {
-                document.body.classList.remove("cursor-hover");
-            }
-        });
-
         animate();
+        window.addEventListener("pagehide", () => {
+            cancelAnimationFrame(raf);
+            window.removeEventListener("resize", resize);
+            canvas.remove();
+        }, { once: true });
     })();
 
 })();
